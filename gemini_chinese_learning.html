@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Chinese CHAO Ultimate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .chao-gradient { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+        .progress-smooth { transition: width 0.3s ease-out; }
+        .tone-pinyin { display: none; font-size: 0.85rem; color: #ea580c; font-weight: bold; }
+        .show-tone .tone-pinyin { display: block; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col max-w-md mx-auto shadow-2xl overflow-hidden relative">
+
+    <header id="app-header" class="bg-white p-4 flex flex-col gap-3 sticky top-0 z-50 border-b border-slate-100 shrink-0">
+        <div class="flex justify-between items-center">
+            <button onclick="goHome()" class="text-slate-400 text-xl font-bold">✕</button>
+            <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-lg">
+                    <span class="text-[11px] font-bold text-slate-500">코스 설정:</span>
+                    <select id="level-selector" onchange="changeLevelManual(this.value)" class="bg-transparent font-bold text-orange-600 text-xs focus:outline-none cursor-pointer">
+                        <option value="3">Level 3 (여행 마스터)</option>
+                        <option value="4">Level 4 (비즈니스 마스터)</option>
+                    </select>
+                </div>
+                <span id="top-stage-badge" class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-[11px] font-bold">단계</span>
+            </div>
+            <button id="tone-toggle-btn" onclick="toggleToneView()" class="hidden bg-slate-100 border border-slate-200 px-2 py-1 rounded-lg text-xs font-bold text-slate-600">āáǎà 성조</button>
+        </div>
+        <div id="progress-container" class="w-full bg-slate-200 h-2 rounded-full overflow-hidden hidden">
+            <div id="progress-bar" class="bg-orange-400 h-full progress-smooth" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto bg-white relative">
+        
+        <div id="home-view" class="p-5 space-y-6">
+            <div class="p-6 chao-gradient rounded-3xl text-white shadow-lg">
+                <span id="dashboard-level" class="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full tracking-wider">LEVEL 3</span>
+                <h2 id="dashboard-title" class="text-2xl font-black mt-2">중국어 고급 마스터 과정</h2>
+                <p class="opacity-90 text-xs mt-1" id="total-progress-text">단원을 클리어하여 다음 진도를 잠금해제 하세요!</p>
+            </div>
+            
+            <div id="roadmap-container" class="space-y-6"></div>
+        </div>
+
+        <div id="lesson-view" class="hidden p-5 space-y-6 pb-24">
+            <div id="quest-guide-text" class="text-sm text-slate-400 font-bold">빈칸에 알맞은 것을 고르시오</div>
+
+            <div id="graphic-area" class="w-full h-40 bg-orange-50 rounded-2xl overflow-hidden flex flex-col items-center justify-center border border-slate-100 relative p-3">
+                <div id="graphic-icon" class="text-6xl mb-1">🧳</div>
+                <div id="graphic-desc" class="text-xs font-bold text-slate-400">Illustration</div>
+            </div>
+
+            <div id="main-text-frame" class="text-center space-y-2">
+                <div class="tone-pinyin id-pinyin-display"></div>
+                <div class="flex items-center justify-center gap-3">
+                    <h2 id="target-chinese" class="text-3xl font-bold tracking-wide text-slate-800">중국어 한자</h2>
+                    <button onclick="playCurrentQuestionAudio()" class="w-10 h-10 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center text-lg active:scale-90 shadow-sm transition">🔊</button>
+                </div>
+                <p id="target-translation" class="text-base text-slate-400 font-medium">한국어 해석</p>
+            </div>
+
+            <div id="interaction-area" class="min-h-[160px] pt-2"></div>
+        </div>
+    </main>
+
+    <footer id="footer-action" class="hidden p-4 bg-white border-t border-slate-100 sticky bottom-0 z-40 shrink-0">
+        <button id="next-btn" class="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold text-lg active:scale-[0.99] transition shadow-md">계속하기</button>
+    </footer>
+
+    <div id="result-sheet" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t-2 rounded-t-3xl p-5 shadow-2xl z-50 transform translate-y-100 hidden">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <div id="sheet-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold"></div>
+                <div>
+                    <h4 id="sheet-title" class="font-bold text-lg">결과</h4>
+                    <p id="sheet-subtitle" class="text-xs text-slate-400"></p>
+                </div>
+            </div>
+            <button id="sheet-audio-btn" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">🔊</button>
+        </div>
+        <button id="sheet-next-btn" class="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold text-lg">계속하기</button>
+    </div>
+
+    <script>
+        const stageConfig = [
+            { id: 'voca', total: 20, label: '어휘 학습 (20문)' },
+            { id: 'grammar', total: 20, label: '문법 마스터 (20문)' },
+            { id: 'roleplay', total: 15, label: '본문 롤플레잉 (15문)' },
+            { id: 'quiz', total: 15, label: '실전 리뷰 퀴즈 (15문)' },
+            { id: 'ai-chat', total: 1, label: 'AI 동적 프리토킹' }
+        ];
+
+        const initialLevelData = {
+            3: [
+                { id: 0, title: "🧳 1. 여행 준비", unlocked: true, currentStageProgress: 'voca', doneStages: [] },
+                { id: 1, title: "✈️ 2. 공항과 기내", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 2, title: "🏨 3. 호텔 체크인", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 3, title: "🍽️ 4. 식당과 주문", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 4, title: "🚇 5. 교통과 이동", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 5, title: "🛍️ 6. 쇼핑과 환불", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 6, title: "🗺️ 7. 길 찾기 관광", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 7, title: "☕ 8. 카페와 대화", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 8, title: "🏥 9. 약국과 병원", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 9, title: "📞 10. 전화와 소통", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 10, title: "🎉 11. 축하와 모임", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 11, title: "💼 12. 비즈니스 업무", unlocked: false, currentStageProgress: 'voca', doneStages: [] }
+            ],
+            4: [
+                { id: 0, title: "🏢 1. 출장 및 공항 픽업", unlocked: true, currentStageProgress: 'voca', doneStages: [] },
+                { id: 1, title: "🤝 2. 비즈니스 첫 미팅", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 2, title: "📞 3. 일정 조정 및 통화", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 3, title: "📊 4. 회사 및 제품 소개", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 4, title: "📜 5. 계약 조건 협상", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 5, title: "🍷 6. 비즈니스 만찬", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 6, title: "📈 7. 시장 조사 및 방문", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 7, title: "🛠️ 8. 문제 해결 및 컴플레인", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 8, title: "🏦 9. 대금 결제 및 송금", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 9, title: "📦 10. 통관 및 물류 배송", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 10, title: "🙋 11. 전시회 및 바이어 응대", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
+                { id: 11, title: "👋 12. 환송 및 파트너십 구축", unlocked: false, currentStageProgress: 'voca', doneStages: [] }
+            ]
+        };
+
+        let fullDatabase = JSON.parse(localStorage.getItem('chao_pro_multilevel_db')) || initialLevelData;
+        let currentLevel = 3;
+        let activeCatId = 0;
+        let currentStageId = 'voca';
+        let stepIndex = 0;
+        let selectedOption = null;
+        let showTone = false;
+        let audioTargetString = "";
+        let chatHistory = [];
+
+        // 🌟 풍성하게 확장된 단어 마스터 풀 (각 레벨당 8개 이상의 단어를 완전히 분리)
+        const vocabularyPool = {
+            3: [
+                { zh: "行李箱", py: "xínglǐxiāng", ko: "여행가방", emoji: "🧳" },
+                { zh: "护照", py: "hùzhào", ko: "여권", emoji: "🛂" },
+                { zh: "机票", py: "jīpiào", ko: "비행기표", emoji: "🎫" },
+                { zh: "地图", py: "dìtú", ko: "지도", emoji: "🗺️" },
+                { zh: "相机", py: "xiàngjī", ko: "카메라", emoji: "📷" },
+                { zh: "酒店", py: "jiǔdiàn", ko: "호텔", emoji: "🏨" },
+                { zh: "现金", py: "xiànjīn", ko: "현금", emoji: "💵" },
+                { zh: "衣服", py: "yīfu", ko: "옷", emoji: "👔" }
+            ],
+            4: [
+                { zh: "出差", py: "chūchāi", ko: "출장", emoji: "💼" },
+                { zh: "合同", py: "hétong", ko: "계약서", emoji: "📜" },
+                { zh: "会议", py: "huìyì", ko: "비즈니스 회의", emoji: "📊" },
+                { zh: "谈判", py: "tánpàn", ko: "비즈니스 협상", emoji: "🤝" },
+                { zh: "公司", py: "gōngsī", ko: "회사", emoji: "🏢" },
+                { zh: "经理", py: "jīnglǐ", ko: "매니저/부장", emoji: "🧑‍💼" },
+                { zh: "合作", py: "hézuò", ko: "협력/파트너십", emoji: "🤛" },
+                { zh: "产品", py: "chǎnpǐn", ko: "제품/상품", emoji: "📦" }
+            ]
+        };
+
+        // 매 세션마다 단어 카드를 완전히 랜덤하게 섞어주는 유틸리티 셔플 함수
+        let localizedVocaList = [];
+        function shuffleSessionVocabulary() {
+            const origin = vocabularyPool[currentLevel];
+            localizedVocaList = [...origin].sort(() => Math.random() - 0.5);
+        }
+
+        function initChatHistory() {
+            if(currentLevel === 3) {
+                chatHistory = [{ role: 'assistant', zh: "你好！听说你准备去中国旅游，行李箱和护照都带齐了吗？", ko: "안녕하세요! 중국 여행을 준비하신다는데, 캐리어랑 여권은 다 챙기셨나요?" }];
+            } else {
+                chatHistory = [{ role: 'assistant', zh: "张经理您好！欢迎来到中国出差。关于这次的会议和合同，有什么想法吗？", ko: "장 매니저님 안녕하세요! 중국 출장을 환영합니다. 이번 회의와 계약서에 대해 어떤 의견이 있으신가요?" }];
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('chao_pro_multilevel_db', JSON.stringify(fullDatabase));
+        }
+
+        function changeLevelManual(targetLvl) {
+            currentLevel = parseInt(targetLvl);
+            goHome();
+        }
+
+        function goHome() {
+            document.getElementById('home-view').classList.remove('hidden');
+            document.getElementById('lesson-view').classList.add('hidden');
+            document.getElementById('footer-action').classList.add('hidden');
+            document.getElementById('progress-container').classList.add('hidden');
+            document.getElementById('result-sheet').classList.add('hidden');
+            document.getElementById('tone-toggle-btn').classList.add('hidden');
+            
+            document.getElementById('level-selector').value = currentLevel;
+            document.getElementById('dashboard-level').innerText = `LEVEL ${currentLevel}`;
+            document.getElementById('dashboard-title').innerText = currentLevel === 3 ? "여행 중국어 회화 코스" : "비즈니스 스피킹 마스터 코스";
+            
+            initChatHistory();
+            renderRoadmapDashboard();
+        }
+
+        function renderRoadmapDashboard() {
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = '';
+            const cats = fullDatabase[currentLevel];
+
+            let clearedCount = cats.filter(c => c.doneStages.length === 5).length;
+            document.getElementById('total-progress-text').innerText = `총 12개 카테고리 중 ${clearedCount}개 단원 완료!`;
+
+            cats.forEach((cat) => {
+                const isLocked = !cat.unlocked;
+                const catCard = document.createElement('div');
+                catCard.className = `p-4 border rounded-2xl shadow-sm transition ${isLocked ? 'bg-slate-50 opacity-60 border-slate-200' : 'bg-white border-orange-200'}`;
+                
+                let stageButtonsHtml = '';
+                if (!isLocked) {
+                    stageButtonsHtml = `<div class="grid grid-cols-1 gap-2 mt-3 pt-3 border-t border-slate-100">`;
+                    stageConfig.forEach(stg => {
+                        const isStageCleared = cat.doneStages.includes(stg.id);
+                        const isClickable = isStageCleared || (cat.currentStageProgress === stg.id);
+                        
+                        stageButtonsHtml += `
+                            <button onclick="${isClickable ? `launchStageAction(${cat.id}, '${stg.id}')` : ''}" 
+                                class="w-full text-left p-2.5 text-xs font-bold rounded-xl flex justify-between items-center transition
+                                ${isStageCleared ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 
+                                  (cat.currentStageProgress === stg.id ? 'bg-orange-50 text-orange-700 border-2 border-orange-400 animate-pulse' : 'bg-slate-100 text-slate-400 cursor-not-allowed')}">
+                                <span>${stg.label}</span>
+                                <span>${isStageCleared ? '✅ 다시학습' : (cat.currentStageProgress === stg.id ? '⚡ 학습시작' : '🔒 잠김')}</span>
+                            </button>
+                        `;
+                    });
+                    stageButtonsHtml += `</div>`;
+                }
+
+                catCard.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-base font-extrabold text-slate-800">${cat.title}</span>
+                        <span class="text-xs font-bold ${isLocked ? 'text-slate-400' : 'text-orange-500'}">
+                            ${isLocked ? '🔒 잠김' : (cat.doneStages.length === 5 ? '🏆 마스터' : '✍️ 진행중')}
+                        </span>
+                    </div>
+                    ${stageButtonsHtml}
+                `;
+                container.appendChild(catCard);
+            });
+        }
+
+        function launchStageAction(catId, stageId) {
+            activeCatId = catId;
+            currentStageId = stageId;
+            stepIndex = 0;
+            
+            // 🌟 단계에 들어갈 때마다 단어 순서를 무작위로 섞어서 중복 출제를 완벽 방지
+            shuffleSessionVocabulary();
+
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('lesson-view').classList.remove('hidden');
+            document.getElementById('footer-action').classList.remove('hidden');
+            document.getElementById('progress-container').classList.remove('hidden');
+            document.getElementById('top-stage-badge').innerText = stageConfig.find(s => s.id === stageId).label.split(' ')[0];
+            
+            if(stageId === 'roleplay') document.getElementById('tone-toggle-btn').classList.remove('hidden');
+            compileStepEngine();
+        }
+
+        function compileStepEngine() {
+            let totalMax = (currentStageId === 'voca' || currentStageId === 'grammar') ? 20 : 15;
+            if(currentStageId === 'ai-chat') totalMax = 1;
+
+            document.getElementById('progress-bar').style.width = `${(stepIndex / totalMax) * 100}%`;
+            document.getElementById('result-sheet').classList.add('hidden');
+
+            const area = document.getElementById('interaction-area');
+            const gIcon = document.getElementById('graphic-icon');
+            const gDesc = document.getElementById('graphic-desc');
+            const zhText = document.getElementById('target-chinese');
+            const koText = document.getElementById('target-translation');
+            const pinyinDisplay = document.querySelector('.id-pinyin-display');
+            
+            area.innerHTML = '';
+            selectedOption = null;
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.className = "w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold text-lg";
+            nextBtn.innerText = "확인하기";
+
+            // 🌟 이번 세션에서 랜덤하게 무작위 정렬된 리스트에서 안전하게 순환 호출
+            const v = localizedVocaList[stepIndex % localizedVocaList.length];
+
+            // 보기를 오답 카드와 무작위로 믹스하여 중복되지 않도록 추출하는 로직 구현
+            const getDistractors = (correct, list) => {
+                return [correct, ...list.filter(item => item.zh !== correct).map(item => item.zh).slice(0, 3)];
+            };
+
+            if(currentStageId === 'voca') {
+                const subType = stepIndex % 3;
+                if(subType === 0) {
+                    document.getElementById('quest-guide-text').innerText = "올바른 답을 고르시오";
+                    gIcon.innerText = v.emoji; gDesc.innerText = "어휘 매칭";
+                    zhText.innerText = "(  )"; koText.innerText = v.ko; pinyinDisplay.innerText = "";
+                    audioTargetString = v.zh; 
+                    renderSelectionButtons(getDistractors(v.zh, localizedVocaList), v.zh, 'voca');
+                } else if(subType === 1) {
+                    document.getElementById('quest-guide-text').innerText = "녹음을 듣고, 알맞은 단어를 고르세요";
+                    gIcon.innerText = "🔊"; gDesc.innerText = "청취 훈련";
+                    zhText.innerText = "(  )"; koText.innerText = "소리를 매칭하세요"; pinyinDisplay.innerText = "";
+                    audioTargetString = v.zh;
+                    renderSelectionButtons(getDistractors(v.zh, localizedVocaList), v.zh, 'voca');
+                } else {
+                    document.getElementById('quest-guide-text').innerText = "단어를 선택하여 빈칸을 채우시오";
+                    gIcon.innerText = "📝"; gDesc.innerText = "문맥 응용";
+                    if(currentLevel === 3) {
+                        zhText.innerText = `我把 (  ) 准备好了。`; koText.innerText = `나는 ${v.ko}을(를) 준비 완료했습니다.`;
+                        audioTargetString = `我把${v.zh}准备好了。`;
+                    } else {
+                        zhText.innerText = `我们要讨论 (  ) 內容。`; koText.innerText = `우리는 ${v.ko} 내용을 토론해야 합니다.`;
+                        audioTargetString = `我们要讨论${v.zh}内容。`;
+                    }
+                    pinyinDisplay.innerText = "";
+                    renderSelectionButtons(getDistractors(v.zh, localizedVocaList), v.zh, 'voca');
+                }
+                nextBtn.onclick = verifyStandardSelect;
+
+            } else if(currentStageId === 'grammar') {
+                document.getElementById('quest-guide-text').innerText = "빈칸에 알맞은 것을 고르시오";
+                const gType = stepIndex % 3;
+                gIcon.innerText = "🎯"; gDesc.innerText = "문법 패턴";
+                
+                if(currentLevel === 3) {
+                    if(gType === 0) {
+                        zhText.innerText = `这是我 (  ) 行李箱。`; koText.innerText = "이것은 저의 여행가방입니다."; audioTargetString = "这是我的行李箱。";
+                        renderSelectionButtons(["的", "得", "地", "了"], "的", 'grammar', `这是我 (  ) 行李箱。`);
+                    } else if(gType === 1) {
+                        zhText.innerText = `我们去买机票 (  )。`; koText.innerText = "우리 비행기표 사러 가자."; audioTargetString = "调整 我们去买机票吧。";
+                        renderSelectionButtons(["吧", "吗", "呢", "啊"], "吧", 'grammar', `我们去买机票 (  )。`);
+                    } else {
+                        zhText.innerText = `我 (  ) 护照 带来了。`; koText.innerText = "나는 여권을 챙겨왔어."; audioTargetString = "我把护照带来了。";
+                        renderSelectionButtons(["把", "反", "在", "给"], "把", 'grammar', `我 (  ) 护照 带来了。`);
+                    }
+                } else {
+                    if(gType === 0) {
+                        zhText.innerText = `关于这次会议，我 (  ) 想法。`; koText.innerText = "이번 회의에 관해서 저는 의견이 없습니다."; audioTargetString = "关于这次会议，我没有想法。";
+                        renderSelectionButtons(["没有", "不", "别", "未"], "没有", 'grammar', `关于这次会议，我 (  ) 想法。`);
+                    } else if(gType === 1) {
+                        zhText.innerText = `请 𡈡 仔细看 (  ) 合同。`; koText.innerText = "이 계약서를 좀 자세히 읽어 주십시오."; audioTargetString = "请您仔细看看合同。";
+                        renderSelectionButtons(["看看", "看了", "看见", "看完"], "看看", 'grammar', `请您仔细看 (  ) 合同。`);
+                    } else {
+                        zhText.innerText = `我们 (  ) 建立合作关系。`; koText.innerText = "우리는 협력 관계를 구축하고 싶습니다."; audioTargetString = "我们希望建立合作关系。";
+                        renderSelectionButtons(["希望", "需要", "打算", "应该"], "希望", 'grammar', `我们 (  ) 建立合作关系。`);
+                    }
+                }
+                pinyinDisplay.innerText = "";
+                nextBtn.onclick = verifyStandardSelect;
+
+            } else if(currentStageId === 'roleplay') {
+                document.getElementById('quest-guide-text').innerText = "듣고 따라 발음해보세요 (CHAO AI강화)";
+                gIcon.innerText = "👥"; gDesc.innerText = `롤플레잉 (${stepIndex+1}/15)`;
+                
+                const scriptSet = {
+                    3: [
+                        { zh: "我想去中国旅游。", py: "wǒ xiǎng qù zhōng guó lǚ yóu", ko: "저는 중국 여행에 가고 싶어요." },
+                        { zh: "你准备好护照了吗？", py: "nǐ zhǔn bèi hǎo hù zhào le ma", ko: "여권은 준비되셨나요?" },
+                        { zh: "护照放在行李箱里了。", py: "hù zhào fàng zài xíng lǐ xiāng lǐ le", ko: "여권은 여행 가방 안에 넣어두었습니다." }
+                    ],
+                    4: [
+                        { zh: "这次出差非常重要。", py: "zhè cì chū chāi fēi cháng zhòng yào", ko: "이번 출장은 매우 중요합니다." },
+                        { zh: "我们需要签这个合同。", py: "wǒ men xū yào qiān zhè ge hé tong", ko: "우리는 이 계약서에 서명해야 합니다." },
+                        { zh: "下午两点举行会议。", py: "xià wǔ liǎng diǎn jǔ xíng huì yì", ko: "오후 2시에 회의를 거행합니다." }
+                    ]
+                };
+                
+                // 🌟 문장 순서까지도 무작위 셔플링 배열 분기 매칭
+                const rpScript = [...scriptSet[currentLevel]].sort(() => Math.random() - 0.5);
+                const currentLine = rpScript[stepIndex % rpScript.length];
+                
+                zhText.innerText = currentLine.zh; koText.innerText = currentLine.ko; pinyinDisplay.innerText = currentLine.py;
+                audioTargetString = currentLine.zh;
+                nextBtn.innerText = "🎙️ 발음 시작하기 (따라 말하기)";
+                nextBtn.onclick = triggerSpeechAnalysis;
+
+            } else if(currentStageId === 'quiz') {
+                document.getElementById('quest-guide-text').innerText = "빈칸에 알맞은 것을 고르시오 (복습)";
+                gIcon.innerText = "💯"; gDesc.innerText = "종합 리뷰";
+                
+                if(currentLevel === 3) {
+                    if(stepIndex % 2 === 0) {
+                        zhText.innerText = "去中国旅游需要 (  )。"; koText.innerText = "중국 여행을 가려면 여권이 필요해."; audioTargetString = "去中国旅游需要护照。";
+                        renderSelectionButtons(["护照", "相机", "衣服", "酒店"], "护照", 'voca');
+                    } else {
+                        zhText.innerText = "我们 (  ) 酒店 预订好了。"; koText.innerText = "우리는 호텔 예약을 완료했어."; audioTargetString = "我们把酒店预订好了。";
+                        renderSelectionButtons(["把", "的", "吧", "了"], "把", 'voca');
+                    }
+                } else {
+                    if(stepIndex % 2 === 0) {
+                        zhText.innerText = "请签一下这个 (  )。"; koText.innerText = "이 계약서에 서명해 주세요."; audioTargetString = "请签一下这个合同。";
+                        renderSelectionButtons(["合同", "会议", "出差", "谈判"], "合同", 'voca');
+                    } else {
+                        zhText.innerText = "关于这次会议，我 (  ) 意见。"; koText.innerText = "이번 회의에 대해 저는 이견이 없습니다."; audioTargetString = "关于这次会议，我没有意见。";
+                        renderSelectionButtons(["没有", "不", "别", "完"], "没有", 'voca');
+                    }
+                }
+                pinyinDisplay.innerText = "";
+                nextBtn.onclick = verifyStandardSelect;
+
+            } else if(currentStageId === 'ai-chat') {
+                document.getElementById('quest-guide-text').innerText = "AI 선생님의 말을 듣고 대답하세요 (자유 대화)";
+                gIcon.innerText = "🤖"; gDesc.innerText = "CHAO AI 프리토킹";
+                const currentAiTurn = chatHistory[chatHistory.length-1];
+                zhText.innerText = currentAiTurn.zh; koText.innerText = currentAiTurn.ko; pinyinDisplay.innerText = "";
+                audioTargetString = currentAiTurn.zh;
+
+                const chatBox = document.createElement('div');
+                chatBox.className = "w-full space-y-3 bg-slate-50 p-3 rounded-2xl max-h-[180px] overflow-y-auto mb-3 text-xs";
+                chatHistory.forEach(msg => {
+                    const isAi = msg.role === 'assistant';
+                    chatBox.innerHTML += `<div class="${isAi ? 'text-left' : 'text-right'}"><span class="inline-block px-3 py-2 rounded-xl max-w-[80%] ${isAi ? 'bg-orange-100 text-orange-800' : 'bg-emerald-500 text-white'}"><strong>${isAi ? 'AI' : '나'}:</strong> ${msg.zh}<br><small class="opacity-70">${msg.ko}</small></span></div>`;
+                });
+                area.appendChild(chatBox);
+                setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 50);
+                nextBtn.innerText = "🎙️ 대답하기 (내 음성 녹음)";
+                nextBtn.onclick = runAiChatVoiceEngine;
+            }
+
+            setTimeout(() => {
+                if (currentStageId === 'voca' && stepIndex % 3 === 1) {
+                    runInternalTTS(v.zh);
+                } else {
+                    playCurrentQuestionAudio();
+                }
+            }, 350);
+        }
+
+        function playCurrentQuestionAudio() { if(audioTargetString) runInternalTTS(audioTargetString); }
+
+        function renderSelectionButtons(opts, correctAns, type, previewText = '') {
+            const area = document.getElementById('interaction-area');
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-2 gap-3 w-full";
+            const shuffled = [...opts].sort(() => Math.random() - 0.5);
+            shuffled.forEach(o => {
+                const btn = document.createElement('button');
+                btn.className = "p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-700 transition active:bg-orange-50";
+                btn.innerText = o;
+                btn.onclick = () => {
+                    Array.from(grid.children).forEach(b => b.className = "p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-700");
+                    btn.className = "p-3.5 bg-emerald-50 border-2 border-emerald-500 rounded-xl font-bold text-emerald-600";
+                    selectedOption = { user: o, correct: correctAns };
+                    if (type === 'grammar') document.getElementById('target-chinese').innerHTML = previewText.replace('(  )', `<span class="text-emerald-600 font-extrabold underline">${o}</span>`);
+                };
+                grid.appendChild(btn);
+            });
+            area.appendChild(grid);
+        }
+
+        function verifyStandardSelect() {
+            if(!selectedOption) return alert('보기를 선택하세요!');
+            launchResultPopSheet(selectedOption.user === selectedOption.correct ? 100 : 0);
+        }
+
+        function runInternalTTS(text) {
+            if('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const ut = new SpeechSynthesisUtterance(text);
+                ut.lang = 'zh-CN';
+                window.speechSynthesis.speak(ut);
+            }
+        }
+
+        function triggerSpeechAnalysis() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!SpeechRecognition) return alert('녹음 기능 미지원 환경');
+            const rec = new SpeechRecognition(); rec.lang = 'zh-CN';
+            rec.start();
+            rec.onresult = (e) => { launchResultPopSheet(90, e.results[0][0].transcript); };
+        }
+
+        function runAiChatVoiceEngine() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new SpeechRecognition(); rec.lang = 'zh-CN';
+            rec.start();
+            rec.onresult = (e) => {
+                const userSpeech = e.results[0][0].transcript;
+                let replyZh = currentLevel === 3 ? "太好了！祝你中国旅游愉快！" : "很好，那我们下午两点在会议室讨论合同。";
+                let replyKo = currentLevel === 3 ? "좋네요! 즐거운 중국 여행 되세요!" : "좋습니다, 그럼 오후 2시에 회의실에서 계약서를 검토합시다.";
+
+                chatHistory.push({ role: 'user', zh: userSpeech, ko: `(내 답변): ${userSpeech}` });
+                chatHistory.push({ role: 'assistant', zh: replyZh, ko: replyKo });
+                setTimeout(() => { compileStepEngine(); }, 400);
+            };
+        }
+
+        function launchResultPopSheet(score, transcript = '') {
+            const sheet = document.getElementById('result-sheet');
+            const title = document.getElementById('sheet-title');
+            const icon = document.getElementById('sheet-icon');
+            const sBtn = document.getElementById('sheet-next-btn');
+            sheet.classList.remove('hidden'); sheet.classList.add('sheet-up');
+
+            if(score >= 60) {
+                title.innerText = "정답입니다!"; title.className = "font-bold text-lg text-emerald-600";
+                icon.innerText = "✓"; icon.className = "w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold";
+                sBtn.onclick = handleStageProgressionStep;
+            } else {
+                title.innerText = "다시 시도해 보세요"; title.className = "font-bold text-lg text-red-500";
+                icon.innerText = "✕"; icon.className = "w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-xl font-bold";
+                sBtn.onclick = () => { sheet.classList.add('hidden'); compileStepEngine(); };
+            }
+        }
+
+        function handleStageProgressionStep() {
+            let totalMax = (currentStageId === 'voca' || currentStageId === 'grammar') ? 20 : 15;
+            if(currentStageId === 'ai-chat') totalMax = 1;
+
+            if(stepIndex < totalMax - 1) {
+                stepIndex++;
+                compileStepEngine();
+            } else {
+                const cats = fullDatabase[currentLevel];
+                if (!cats[activeCatId].doneStages.includes(currentStageId)) {
+                    cats[activeCatId].doneStages.push(currentStageId);
+                }
+
+                const currentIdx = stageConfig.findIndex(s => s.id === currentStageId);
+                if (currentIdx < stageConfig.length - 1) {
+                    cats[activeCatId].currentStageProgress = stageConfig[currentIdx + 1].id;
+                    alert("🎉 단계를 완수했습니다! 다음 단계가 해제됩니다.");
+                } else {
+                    alert(`🏆 단원 정복! '${cats[activeCatId].title}'의 모든 단계를 클리어했습니다.`);
+                    if (activeCatId < cats.length - 1) {
+                        cats[activeCatId + 1].unlocked = true;
+                    }
+                }
+                saveProgress();
+                goHome();
+            }
+        }
+
+        window.onload = goHome;
+    </script>
+</body>
+</html>
