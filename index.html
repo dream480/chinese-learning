@@ -14,7 +14,7 @@
         .show-tone .tone-pinyin { display: block; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col max-w-md mx-auto shadow-2xl overflow-hidden relative">
+<body class="bg-slate-100 h-screen w-screen flex flex-col max-w-md mx-auto shadow-2xl overflow-hidden relative">
 
     <header id="app-header" class="bg-white p-4 flex flex-col gap-3 sticky top-0 z-50 border-b border-slate-100 shrink-0">
         <div class="flex justify-between items-center">
@@ -45,7 +45,9 @@
                 <p class="opacity-90 text-xs mt-1" id="total-progress-text">모든 카테고리가 오픈되었습니다. 원하는 단원을 선택하세요!</p>
             </div>
             
-            <div id="roadmap-container" class="space-y-6"></div>
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider pl-1">학습 카테고리 로드맵</h3>
+            
+            <div id="roadmap-container" class="space-y-6 pb-10"></div>
         </div>
 
         <div id="lesson-view" class="hidden p-5 space-y-6 pb-24">
@@ -170,7 +172,7 @@
             if(currentLevel === 3) {
                 chatHistory = [{ role: 'assistant', zh: "你好！听说你准备去中国旅游，行李箱和护照都带齐了吗？", ko: "안녕하세요! 중국 여행을 준비하신다는데, 캐리어랑 여권은 다 챙기셨나요?" }];
             } else {
-                chatHistory = [{ role: 'assistant', zh: "张经理您好！欢迎来到中国出差。关于这次的会议 and 合同，有什么想法吗？", ko: "장 매니저님 안녕하세요! 중국 출장을 환영합니다. 이번 회의와 계약서에 대해 어떤 의견이 있으신가요?" }];
+                chatHistory = [{ role: 'assistant', zh: "张经理您好！欢迎来到中国出差。关于这次的会议와 合同，有什么想法吗？", ko: "장 매니저님 안녕하세요! 중국 출장을 환영합니다. 이번 회의와 계약서에 대해 어떤 의견이 있으신가요?" }];
             }
         }
 
@@ -199,7 +201,6 @@
             renderRoadmapDashboard();
         }
 
-        // 🌟 [수정 완료] 잠금 조건(Locked) 변수를 완전히 제거하여 모든 버튼 항시 오픈
         function renderRoadmapDashboard() {
             const container = document.getElementById('roadmap-container');
             container.innerHTML = '';
@@ -322,7 +323,7 @@
                 if(currentLevel === 3) {
                     if(gType === 0) {
                         zhText.innerText = `这是我 (  ) 行李箱。`; koText.innerText = "이것은 저의 여행가방입니다."; audioTargetString = "这是我的行李箱。";
-                        renderSelectionButtons(["的", "得", "地", "了"], "的", 'grammar', `这是我 (  ) 行理箱。`);
+                        renderSelectionButtons(["的", "得", "地", "了"], "의", 'grammar', `这是我 (  ) 行李箱。`);
                     } else if(gType === 1) {
                         zhText.innerText = `我们去买机票 (  )。`; koText.innerText = "우리 비행기표 사러 가자."; audioTargetString = "调整 我们去买机票吧。";
                         renderSelectionButtons(["吧", "吗", "呢", "啊"], "吧", 'grammar', `我们去买机票 (  )。`);
@@ -379,7 +380,7 @@
                         zhText.innerText = "去中国旅游需要 (  )。"; koText.innerText = "중국 여행을 가려면 여권이 필요해."; audioTargetString = "去中国旅游需要护照。";
                         renderSelectionButtons(["护照", "相机", "衣服", "酒店"], "护照", 'voca');
                     } else {
-                        zhText.innerText = "我们 (  ) 酒店 预订好了。"; koText.innerText = "우리는 호텔 예약을 완료했어."; audioTargetString = "我们把酒店预订好了。";
+                        zhText.innerText = "我们 (  ) 酒店 预订好了。"; koText.innerText = "우리는 호텔 예약을 완료했어."; audioTargetString = "调整 我们把酒店预订好了。";
                         renderSelectionButtons(["把", "的", "吧", "了"], "把", 'voca');
                     }
                 } else {
@@ -388,7 +389,7 @@
                         renderSelectionButtons(["合同", "会议", "出差", "谈判"], "合同", 'voca');
                     } else {
                         zhText.innerText = "关于这次会议，我 (  ) 意见。"; koText.innerText = "이번 회의에 대해 저는 이견이 없습니다."; audioTargetString = "关于这次会议，我没有意见。";
-                        renderSelectionButtons(["没有", "不", "别", "完"], "没有", 'voca');
+                        renderSelectionButtons(["没有", "不", "别", "完"], "集没有", 'voca');
                     }
                 }
                 pinyinDisplay.innerText = "";
