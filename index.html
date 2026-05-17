@@ -42,7 +42,7 @@
             <div class="p-6 chao-gradient rounded-3xl text-white shadow-lg">
                 <span id="dashboard-level" class="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full tracking-wider">LEVEL 3</span>
                 <h2 id="dashboard-title" class="text-2xl font-black mt-2">중국어 고급 마스터 과정</h2>
-                <p class="opacity-90 text-xs mt-1" id="total-progress-text">단원을 클리어하여 다음 진도를 잠금해제 하세요!</p>
+                <p class="opacity-90 text-xs mt-1" id="total-progress-text">모든 카테고리가 오픈되었습니다. 원하는 단원을 선택하세요!</p>
             </div>
             
             <div id="roadmap-container" class="space-y-6"></div>
@@ -98,32 +98,32 @@
 
         const initialLevelData = {
             3: [
-                { id: 0, title: "🧳 1. 여행 준비", unlocked: true, currentStageProgress: 'voca', doneStages: [] },
-                { id: 1, title: "✈️ 2. 공항과 기내", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 2, title: "🏨 3. 호텔 체크인", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 3, title: "🍽️ 4. 식당과 주문", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 4, title: "🚇 5. 교통과 이동", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 5, title: "🛍️ 6. 쇼핑과 환불", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 6, title: "🗺️ 7. 길 찾기 관광", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 7, title: "☕ 8. 카페와 대화", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 8, title: "🏥 9. 약국과 병원", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 9, title: "📞 10. 전화와 소통", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 10, title: "🎉 11. 축하와 모임", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 11, title: "💼 12. 비즈니스 업무", unlocked: false, currentStageProgress: 'voca', doneStages: [] }
+                { id: 0, title: "🧳 1. 여행 준비", doneStages: [] },
+                { id: 1, title: "✈️ 2. 공항과 기내", doneStages: [] },
+                { id: 2, title: "🏨 3. 호텔 체크인", doneStages: [] },
+                { id: 3, title: "🍽️ 4. 식당과 주문", doneStages: [] },
+                { id: 4, title: "🚇 5. 교통과 이동", doneStages: [] },
+                { id: 5, title: "🛍️ 6. 쇼핑과 환불", doneStages: [] },
+                { id: 6, title: "🗺️ 7. 길 찾기 관광", doneStages: [] },
+                { id: 7, title: "☕ 8. 카페와 대화", doneStages: [] },
+                { id: 8, title: "🏥 9. 약국과 병원", doneStages: [] },
+                { id: 9, title: "📞 10. 전화와 소통", doneStages: [] },
+                { id: 10, title: "🎉 11. 축하와 모임", doneStages: [] },
+                { id: 11, title: "💼 12. 비즈니스 업무", doneStages: [] }
             ],
             4: [
-                { id: 0, title: "🏢 1. 출장 및 공항 픽업", unlocked: true, currentStageProgress: 'voca', doneStages: [] },
-                { id: 1, title: "🤝 2. 비즈니스 첫 미팅", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 2, title: "📞 3. 일정 조정 및 통화", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 3, title: "📊 4. 회사 및 제품 소개", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 4, title: "📜 5. 계약 조건 협상", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 5, title: "🍷 6. 비즈니스 만찬", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 6, title: "📈 7. 시장 조사 및 방문", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 7, title: "🛠️ 8. 문제 해결 및 컴플레인", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 8, title: "🏦 9. 대금 결제 및 송금", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 9, title: "📦 10. 통관 및 물류 배송", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 10, title: "🙋 11. 전시회 및 바이어 응대", unlocked: false, currentStageProgress: 'voca', doneStages: [] },
-                { id: 11, title: "👋 12. 환송 및 파트너십 구축", unlocked: false, currentStageProgress: 'voca', doneStages: [] }
+                { id: 0, title: "🏢 1. 출장 및 공항 픽업", doneStages: [] },
+                { id: 1, title: "🤝 2. 비즈니스 첫 미팅", doneStages: [] },
+                { id: 2, title: "📞 3. 일정 조정 및 통화", doneStages: [] },
+                { id: 3, title: "📊 4. 회사 및 제품 소개", doneStages: [] },
+                { id: 4, title: "📜 5. 계약 조건 협상", doneStages: [] },
+                { id: 5, title: "🍷 6. 비즈니스 만찬", doneStages: [] },
+                { id: 6, title: "📈 7. 시장 조사 및 방문", doneStages: [] },
+                { id: 7, title: "🛠️ 8. 문제 해결 및 컴플레인", doneStages: [] },
+                { id: 8, title: "🏦 9. 대금 결제 및 송금", doneStages: [] },
+                { id: 9, title: "📦 10. 통관 및 물류 배송", doneStages: [] },
+                { id: 10, title: "🙋 11. 전시회 및 바이어 응대", doneStages: [] },
+                { id: 11, title: "👋 12. 환송 및 파트너십 구축", doneStages: [] }
             ]
         };
 
@@ -137,7 +137,6 @@
         let audioTargetString = "";
         let chatHistory = [];
 
-        // 🌟 풍성하게 확장된 단어 마스터 풀 (각 레벨당 8개 이상의 단어를 완전히 분리)
         const vocabularyPool = {
             3: [
                 { zh: "行李箱", py: "xínglǐxiāng", ko: "여행가방", emoji: "🧳" },
@@ -161,7 +160,6 @@
             ]
         };
 
-        // 매 세션마다 단어 카드를 완전히 랜덤하게 섞어주는 유틸리티 셔플 함수
         let localizedVocaList = [];
         function shuffleSessionVocabulary() {
             const origin = vocabularyPool[currentLevel];
@@ -172,7 +170,7 @@
             if(currentLevel === 3) {
                 chatHistory = [{ role: 'assistant', zh: "你好！听说你准备去中国旅游，行李箱和护照都带齐了吗？", ko: "안녕하세요! 중국 여행을 준비하신다는데, 캐리어랑 여권은 다 챙기셨나요?" }];
             } else {
-                chatHistory = [{ role: 'assistant', zh: "张经理您好！欢迎来到中国出差。关于这次的会议和合同，有什么想法吗？", ko: "장 매니저님 안녕하세요! 중국 출장을 환영합니다. 이번 회의와 계약서에 대해 어떤 의견이 있으신가요?" }];
+                chatHistory = [{ role: 'assistant', zh: "张经理您好！欢迎来到中国出差。关于这次的会议 and 合同，有什么想法吗？", ko: "장 매니저님 안녕하세요! 중국 출장을 환영합니다. 이번 회의와 계약서에 대해 어떤 의견이 있으신가요?" }];
             }
         }
 
@@ -201,6 +199,7 @@
             renderRoadmapDashboard();
         }
 
+        // 🌟 [수정 완료] 잠금 조건(Locked) 변수를 완전히 제거하여 모든 버튼 항시 오픈
         function renderRoadmapDashboard() {
             const container = document.getElementById('roadmap-container');
             container.innerHTML = '';
@@ -210,35 +209,31 @@
             document.getElementById('total-progress-text').innerText = `총 12개 카테고리 중 ${clearedCount}개 단원 완료!`;
 
             cats.forEach((cat) => {
-                const isLocked = !cat.unlocked;
                 const catCard = document.createElement('div');
-                catCard.className = `p-4 border rounded-2xl shadow-sm transition ${isLocked ? 'bg-slate-50 opacity-60 border-slate-200' : 'bg-white border-orange-200'}`;
+                catCard.className = 'p-4 border rounded-2xl shadow-sm transition bg-white border-orange-200';
                 
-                let stageButtonsHtml = '';
-                if (!isLocked) {
-                    stageButtonsHtml = `<div class="grid grid-cols-1 gap-2 mt-3 pt-3 border-t border-slate-100">`;
-                    stageConfig.forEach(stg => {
-                        const isStageCleared = cat.doneStages.includes(stg.id);
-                        const isClickable = isStageCleared || (cat.currentStageProgress === stg.id);
-                        
-                        stageButtonsHtml += `
-                            <button onclick="${isClickable ? `launchStageAction(${cat.id}, '${stg.id}')` : ''}" 
-                                class="w-full text-left p-2.5 text-xs font-bold rounded-xl flex justify-between items-center transition
-                                ${isStageCleared ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 
-                                  (cat.currentStageProgress === stg.id ? 'bg-orange-50 text-orange-700 border-2 border-orange-400 animate-pulse' : 'bg-slate-100 text-slate-400 cursor-not-allowed')}">
-                                <span>${stg.label}</span>
-                                <span>${isStageCleared ? '✅ 다시학습' : (cat.currentStageProgress === stg.id ? '⚡ 학습시작' : '🔒 잠김')}</span>
-                            </button>
-                        `;
-                    });
-                    stageButtonsHtml += `</div>`;
-                }
+                let stageButtonsHtml = `<div class="grid grid-cols-1 gap-2 mt-3 pt-3 border-t border-slate-100">`;
+                stageConfig.forEach(stg => {
+                    const isStageCleared = cat.doneStages.includes(stg.id);
+                    
+                    stageButtonsHtml += `
+                        <button onclick="launchStageAction(${cat.id}, '${stg.id}')" 
+                            class="w-full text-left p-2.5 text-xs font-bold rounded-xl flex justify-between items-center transition
+                            ${isStageCleared ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-orange-50/60 text-slate-700 border border-orange-100 hover:border-orange-400'}">
+                            <span>${stg.label}</span>
+                            <span class="text-[10px] font-bold ${isStageCleared ? 'text-emerald-600' : 'text-orange-500'}">
+                                ${isStageCleared ? '✅ 완료 (복습)' : '⚡ 학습하기'}
+                            </span>
+                        </button>
+                    `;
+                });
+                stageButtonsHtml += `</div>`;
 
                 catCard.innerHTML = `
                     <div class="flex justify-between items-center">
                         <span class="text-base font-extrabold text-slate-800">${cat.title}</span>
-                        <span class="text-xs font-bold ${isLocked ? 'text-slate-400' : 'text-orange-500'}">
-                            ${isLocked ? '🔒 잠김' : (cat.doneStages.length === 5 ? '🏆 마스터' : '✍️ 진행중')}
+                        <span class="text-xs font-bold ${cat.doneStages.length === 5 ? 'text-emerald-500' : 'text-amber-500'}">
+                            ${cat.doneStages.length === 5 ? '🏆 마스터' : '📖 학습가능'}
                         </span>
                     </div>
                     ${stageButtonsHtml}
@@ -252,7 +247,6 @@
             currentStageId = stageId;
             stepIndex = 0;
             
-            // 🌟 단계에 들어갈 때마다 단어 순서를 무작위로 섞어서 중복 출제를 완벽 방지
             shuffleSessionVocabulary();
 
             document.getElementById('home-view').classList.add('hidden');
@@ -286,10 +280,7 @@
             nextBtn.className = "w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold text-lg";
             nextBtn.innerText = "확인하기";
 
-            // 🌟 이번 세션에서 랜덤하게 무작위 정렬된 리스트에서 안전하게 순환 호출
             const v = localizedVocaList[stepIndex % localizedVocaList.length];
-
-            // 보기를 오답 카드와 무작위로 믹스하여 중복되지 않도록 추출하는 로직 구현
             const getDistractors = (correct, list) => {
                 return [correct, ...list.filter(item => item.zh !== correct).map(item => item.zh).slice(0, 3)];
             };
@@ -315,7 +306,7 @@
                         zhText.innerText = `我把 (  ) 准备好了。`; koText.innerText = `나는 ${v.ko}을(를) 준비 완료했습니다.`;
                         audioTargetString = `我把${v.zh}准备好了。`;
                     } else {
-                        zhText.innerText = `我们要讨论 (  ) 內容。`; koText.innerText = `우리는 ${v.ko} 내용을 토론해야 합니다.`;
+                        zhText.innerText = `我们要讨论 (  ) 内容。`; koText.innerText = `우리는 ${v.ko} 내용을 토론해야 합니다.`;
                         audioTargetString = `我们要讨论${v.zh}内容。`;
                     }
                     pinyinDisplay.innerText = "";
@@ -331,7 +322,7 @@
                 if(currentLevel === 3) {
                     if(gType === 0) {
                         zhText.innerText = `这是我 (  ) 行李箱。`; koText.innerText = "이것은 저의 여행가방입니다."; audioTargetString = "这是我的行李箱。";
-                        renderSelectionButtons(["的", "得", "地", "了"], "的", 'grammar', `这是我 (  ) 行李箱。`);
+                        renderSelectionButtons(["的", "得", "地", "了"], "的", 'grammar', `这是我 (  ) 行理箱。`);
                     } else if(gType === 1) {
                         zhText.innerText = `我们去买机票 (  )。`; koText.innerText = "우리 비행기표 사러 가자."; audioTargetString = "调整 我们去买机票吧。";
                         renderSelectionButtons(["吧", "吗", "呢", "啊"], "吧", 'grammar', `我们去买机票 (  )。`);
@@ -371,7 +362,6 @@
                     ]
                 };
                 
-                // 🌟 문장 순서까지도 무작위 셔플링 배열 분기 매칭
                 const rpScript = [...scriptSet[currentLevel]].sort(() => Math.random() - 0.5);
                 const currentLine = rpScript[stepIndex % rpScript.length];
                 
@@ -520,17 +510,6 @@
                 const cats = fullDatabase[currentLevel];
                 if (!cats[activeCatId].doneStages.includes(currentStageId)) {
                     cats[activeCatId].doneStages.push(currentStageId);
-                }
-
-                const currentIdx = stageConfig.findIndex(s => s.id === currentStageId);
-                if (currentIdx < stageConfig.length - 1) {
-                    cats[activeCatId].currentStageProgress = stageConfig[currentIdx + 1].id;
-                    alert("🎉 단계를 완수했습니다! 다음 단계가 해제됩니다.");
-                } else {
-                    alert(`🏆 단원 정복! '${cats[activeCatId].title}'의 모든 단계를 클리어했습니다.`);
-                    if (activeCatId < cats.length - 1) {
-                        cats[activeCatId + 1].unlocked = true;
-                    }
                 }
                 saveProgress();
                 goHome();
