@@ -16,7 +16,7 @@
 </head>
 <body class="bg-slate-100 h-screen w-screen flex flex-col max-w-md mx-auto shadow-2xl overflow-hidden relative">
 
-    <header id="app-header" class="bg-white p-4 flex flex-col gap-3 checked top-0 z-50 border-b border-slate-100 shrink-0">
+    <header id="app-header" class="bg-white p-4 flex flex-col gap-3 sticky top-0 z-50 border-b border-slate-100 shrink-0">
         <div class="flex justify-between items-center">
             <button onclick="goHome()" class="text-slate-400 text-xl font-bold">✕</button>
             <div class="flex items-center gap-2">
@@ -46,8 +46,7 @@
             </div>
             
             <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider pl-1">학습 카테고리 로드맵</h3>
-            
-            <div id="roadmap-container" class="space-y-6 pb-12"></div>
+            <div id="roadmap-container" class="space-y-6 pb-10"></div>
         </div>
 
         <div id="lesson-view" class="hidden p-5 space-y-6 pb-24">
@@ -109,7 +108,7 @@
                 { id: 6, title: "🗺️ 7. 길 찾기 관광", doneStages: [] },
                 { id: 7, title: "☕ 8. 카페와 대화", doneStages: [] },
                 { id: 8, title: "🏥 9. 약국과 병원", doneStages: [] },
-                { id: 9, title: "📞 10. 전화와 소통", doneStages: [] },
+                { id: 10, title: "📞 10. 전화와 소통", doneStages: [] },
                 { id: 10, title: "🎉 11. 축하와 모임", doneStages: [] },
                 { id: 11, title: "💼 12. 비즈니스 업무", doneStages: [] }
             ],
@@ -129,17 +128,18 @@
             ]
         };
 
+        // 🌟 [핵심 보완 데이터] 카테고리별 맞춤 프리토킹 초기 시나리오 사전
         const aiTalkingTopics = {
             3: {
-                0: { zh: "你好！听说你准备去中国旅游，行李箱 🧳 准备好了吗？里面放了护照吗？", ko: "안녕하세요! 중국 여행을 준비 중이시라는데 캐리어는 다 싸셨나요? 안에 여권은 넣으셨고요?" },
+                0: { zh: "你好！听说你准备去中国旅游，行李箱 🧳 准备好了吗？里面放를 🔍 护照吗？", ko: "안녕하세요! 중국 여행을 준비 중이시라는데 캐리어는 다 싸셨나요? 안에 여권은 넣으셨고요?" },
                 1: { zh: "先生, 请问您要换机票吗？您的行李托运好了吗？", ko: "손님, 비행기표를 변경하시겠습니까? 수하물 위탁은 끝나셨나요?" },
                 2: { zh: "欢迎光临酒店！请问您有预订房间吗？出示一下护照。", ko: "호텔에 오신 것을 환영합니다! 예약하셨나요? 여권을 보여주세요." },
                 3: { zh: "服务员！你想吃点什么？我们店的饺子和烤鸭非常有名。", ko: "여기요! 무엇을 드시겠습니까? 저희 가게는 만두와 베이징 덕이 유명합니다." },
                 4: { zh: "去北京站应该坐地铁还是坐公共汽车更快呢？", ko: "베이징역에 가려면 지하철을 타는 게 빠를까요, 버스를 타는 게 빠를까요?" },
                 5: { zh: "这件衣服太贵了，能不能便宜一点儿？", ko: "이 옷은 너무 비싸네요, 조금만 깎아주실 수 있나요?" },
-                6: { zh: "请问，去故宫博物馆应该怎么走？我迷路了。", ko: "말씀 좀 묻겠습니다, 고궁 박물관에 가려면 어떻게 가야 하나요? 길을 잃었어요." },
+                6: { zh: "请问，去故宫博物馆应该怎么주행？我迷路了。", ko: "말씀 좀 묻겠습니다, 고궁 박물관에 가려면 어떻게 가야 하나요? 길을 잃었어요." },
                 7: { zh: "这家咖啡厅的环境真漂亮，你想喝咖啡还是中国茶？", ko: "이 카페 분위기가 정말 예쁘네요, 커피를 드시겠어요, 중국 차를 드시겠어요?" },
-                8: { zh: "我觉得身体不舒服，头疼发烧。请问附近有药店吗？", ko: "몸이 안 좋은 것 같아요, 머리가 아프고 열이 나요. 근처에 약국이 있나요?" },
+                8: { zh: "我觉得身体不舒服，头疼发烧。请问附近有药局吗？", ko: "몸이 안 좋은 것 같아요, 머리가 아프고 열이 나요. 근처에 약국이 있나요?" },
                 9: { zh: "喂？请问张华在吗？我想跟他约明天见面。", ko: "여보세요? 장화 씨 계신가요? 내일 만날 약속을 잡고 싶어서요." },
                 10: { zh: "祝你生日快乐！今天的生日聚会你开心吗？", ko: "생일 축하해요! 오늘 생일 파티는 즐거우신가요?" },
                 11: { zh: "下周你要去上海出差，商务行程安排好了吗？", ko: "다음 주에 상하이로 출장을 가시는데, 비즈니스 일정은 다 잡으셨나요?" }
@@ -152,7 +152,7 @@
                 4: { zh: "这个合同的条件我们希望修改，关于价格能不能再让步一点？", ko: "이 계약서의 조건을 수정하고 싶습니다, 가격 면에서 조금 더 양보해 줄 수 있나요?" },
                 5: { zh: "非常感谢今晚的盛情款待！让我们为了以后的合作干杯！", ko: "오늘 밤 성대한 만찬 대접에 정말 감사드립니다! 향후 협력을 위해 건배합시다!" },
                 6: { zh: "这次来中国市场调查，您觉得有哪些主要的发展前景？", ko: "이번에 중국 시장 조사를 오셔서 보시기에 어떤 주요 발전 전망이 있어 보이나요?" },
-                7: { zh: "十分抱歉，这次产品出现了质量缺陷，我们会立刻进行修复和解决。", ko: "정말 죄송합니다, 이번 제품에 품질 결함이 발생했습니다. 즉시 수정하고 해결하겠습니다." },
+                7: { zh: "十分抱歉，这次产品出现了质量缺陷，我们会立刻进行缺陷修复和解决。", ko: "정말 죄송합니다, 이번 제품에 품질 결함이 발생했습니다. 즉시 수정하고 해결하겠습니다." },
                 8: { zh: "关于这次货物的款项，贵公司打算用人民币还是美金进行汇款？", ko: "이번 화물 대금과 관련하여, 귀사는 위안화와 달러 중 어느 것으로 송금하실 계획인가요?" },
                 9: { zh: "由于海关通关流程变严，货物的物流配送可能会延迟几天。", ko: "세관 통관 절차가 까다로워져 화물 물류 배송이 며칠 지연될 수 있습니다." },
                 10: { zh: "欢迎光临我们的展位！请问您对哪一类别的商机和商品感兴趣？", ko: "저희 부스에 오신 것을 환영합니다! 어떤 카테고리의 비즈니스 기회와 상품에 관심이 있으신가요?" },
@@ -169,7 +169,7 @@
         let showTone = false;
         let audioTargetString = "";
         let chatHistory = [];
-        let speechRecognizerInstance = null; 
+        let speechRecognizerInstance = null; // 🌟 수동 제어를 위한 글로벌 인식기 보관소
 
         const vocabularyPool = {
             3: [
@@ -200,6 +200,7 @@
             localizedVocaList = [...origin].sort(() => Math.random() - 0.5);
         }
 
+        // 🌟 [수정 완료] 진입한 레벨과 카테고리에 최적화된 회화 시나리오 스크립트 강제 로드
         function initChatHistory() {
             const topic = aiTalkingTopics[currentLevel][activeCatId] || { zh: "你好！", ko: "안녕하세요!" };
             chatHistory = [{ role: 'assistant', zh: topic.zh, ko: topic.ko }];
@@ -215,7 +216,9 @@
         }
 
         function goHome() {
+            // 녹음 작동 중 홈으로 튕길 때 오디오 채널 강제 중단 안전 예외 처리
             if(speechRecognizerInstance) { try { speechRecognizerInstance.stop(); } catch(e){} }
+
             document.getElementById('home-view').classList.remove('hidden');
             document.getElementById('lesson-view').classList.add('hidden');
             document.getElementById('footer-action').classList.add('hidden');
@@ -278,7 +281,7 @@
             stepIndex = 0;
             
             shuffleSessionVocabulary();
-            if(stageId === 'ai-chat') initChatHistory(); 
+            if(stageId === 'ai-chat') initChatHistory(); // AI 프리토킹 대화 전용 카테고리 초기화
 
             document.getElementById('home-view').classList.add('hidden');
             document.getElementById('lesson-view').classList.remove('hidden');
@@ -353,9 +356,9 @@
                 if(currentLevel === 3) {
                     if(gType === 0) {
                         zhText.innerText = `这是我 (  ) 行李箱。`; koText.innerText = "이것은 저의 여행가방입니다."; audioTargetString = "这是我的行李箱。";
-                        renderSelectionButtons(["的", "得", "地", "了"], "의", 'grammar', `这是我 (  ) 行李箱。`);
+                        renderSelectionButtons(["的", "得", "地", "了"], "的", 'grammar', `这是我 (  ) 行李箱。`);
                     } else if(gType === 1) {
-                        zhText.innerText = `我们去买机票 (  )。`; koText.innerText = "우리 비행기표 사러 가자."; audioTargetString = "我们去买机票吧。";
+                        zhText.innerText = `我们去买机票 (  )。`; koText.innerText = "우리 비행기표 사러 가자."; audioTargetString = "调整 我们去买机票吧。";
                         renderSelectionButtons(["吧", "吗", "呢", "啊"], "吧", 'grammar', `我们去买机票 (  )。`);
                     } else {
                         zhText.innerText = `我 (  ) 护照 带来了。`; koText.innerText = "나는 여권을 챙겨왔어."; audioTargetString = "我把护照带来了。";
@@ -369,7 +372,7 @@
                         zhText.innerText = `请 𡈡 仔细看 (  ) 合同。`; koText.innerText = "이 계약서를 좀 자세히 읽어 주십시오."; audioTargetString = "请您仔细看看合同。";
                         renderSelectionButtons(["看看", "看了", "看见", "看完"], "看看", 'grammar', `请您仔细看 (  ) 合同。`);
                     } else {
-                        zhText.innerText = `我们 (  ) 建立合作关系。`; koText.innerText = "우리는 협력 관계를 구축하고 싶습니다."; audioTargetString = "我们希望建立合作关系。";
+                        zhText.innerText = `我们 (  ) 建立合作关系。`; koText.innerText = "우리는 협력 관계를 구축하고 싶습니다."; audioTargetString = "우리와 협력관계를 맺고 싶습니다。";
                         renderSelectionButtons(["希望", "需要", "打算", "应该"], "希望", 'grammar', `我们 (  ) 建立合作关系。`);
                     }
                 }
@@ -410,7 +413,7 @@
                         zhText.innerText = "去中国旅游需要 (  )。"; koText.innerText = "중국 여행을 가려면 여권이 필요해."; audioTargetString = "去中国旅游需要护照。";
                         renderSelectionButtons(["护照", "相机", "衣服", "酒店"], "护照", 'voca');
                     } else {
-                        zhText.innerText = "我们 (  ) 酒店 预订好了。"; koText.innerText = "우리는 호텔 예약을 완료했어."; audioTargetString = "我们把酒店预订好了。";
+                        zhText.innerText = "我们 (  ) 酒店 预订好了。"; koText.innerText = "우리는 호텔 예약을 완료했어."; audioTargetString = "우리 호텔 예약 다 했어。";
                         renderSelectionButtons(["把", "的", "吧", "了"], "把", 'voca');
                     }
                 } else {
@@ -419,7 +422,7 @@
                         renderSelectionButtons(["合同", "会议", "出差", "谈判"], "合同", 'voca');
                     } else {
                         zhText.innerText = "关于这次会议，我 (  ) 意见。"; koText.innerText = "이번 회의에 대해 저는 이견이 없습니다."; audioTargetString = "关于这次会议，我没有意见。";
-                        renderSelectionButtons(["调整", "不", "别", "完"], "没有", 'voca');
+                        renderSelectionButtons(["没有", "不", "别", "完"], "没有", 'voca');
                     }
                 }
                 pinyinDisplay.innerText = "";
@@ -441,6 +444,7 @@
                 area.appendChild(chatBox);
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 50);
                 
+                // 🌟 [수정 핵심 포인트] 음성인식 수동 조작 프로세스 적용
                 nextBtn.innerText = "🎙️ 대답 시작하기 (녹음 개시)";
                 nextBtn.className = "w-full py-4 bg-orange-500 text-white rounded-2xl font-bold text-lg shadow-md";
                 nextBtn.onclick = startManualVoiceRecording;
@@ -499,13 +503,14 @@
             rec.onresult = (e) => { launchResultPopSheet(90, e.results[0][0].transcript); };
         }
 
+        // 🌟 [수정 핵심 로직 1] 사용자가 직접 누르면 녹음을 켜는 핸들러
         function startManualVoiceRecording() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if(!SpeechRecognition) return alert('음성 인식 기능이 허용되지 않는 브라우저입니다.');
 
             speechRecognizerInstance = new SpeechRecognition();
             speechRecognizerInstance.lang = 'zh-CN';
-            speechRecognizerInstance.continuous = true; 
+            speechRecognizerInstance.continuous = true; // 🌟 말을 잠깐 멈춰도 멋대로 꺼지지 않고 계속 유지시키는 옵션
             speechRecognizerInstance.interimResults = false;
 
             let finalTranscriptAccumulator = "";
@@ -520,14 +525,17 @@
 
             speechRecognizerInstance.start();
 
+            // 액션 바 버튼을 수동 [정지/완료] 규격으로 스위칭
             const nextBtn = document.getElementById('next-btn');
             nextBtn.innerText = "⏹️ 대답 끝내기 (녹음 완료 및 전송)";
             nextBtn.className = "w-full py-4 bg-red-600 text-white rounded-2xl font-bold text-lg shadow-lg animate-pulse";
             
+            // 정지 버튼을 누르기 전까진 절대로 다음 루프로 유도되지 않음
             nextBtn.onclick = function() {
                 if(speechRecognizerInstance) {
-                    speechRecognizerInstance.stop(); 
+                    speechRecognizerInstance.stop(); // 녹음 강제 정지 명령
                     
+                    // 약간의 딜레이를 주어 버퍼가 안전하게 정착된 후 AI 문장 연산 실행
                     setTimeout(() => {
                         processAiNextDialogueTurn(finalTranscriptAccumulator || "내 발음 체크 완료");
                     }, 400);
@@ -535,10 +543,12 @@
             };
         }
 
+        // 🌟 [수정 핵심 로직 2] 수동 정지가 확정된 후 작동하는 AI 대화 빌더
         function processAiNextDialogueTurn(userSpeech) {
             let replyZh = "明白。那我们接下来怎么做呢？继续深入探讨一下吧！";
             let replyKo = "알겠습니다. 그럼 우리 다음으로 무엇을 해볼까요? 계속해서 깊게 이야기 나눠봐요!";
 
+            // 카테고리 상황 인식 조건문 필터 적용
             if(currentLevel === 3) {
                 if(userSpeech.includes("没") || userSpeech.includes("不")) {
                     replyZh = "没关系，多练习几次就好。你还打算买别的旅游准备物吗？";
@@ -560,6 +570,7 @@
             chatHistory.push({ role: 'user', zh: userSpeech, ko: `(내 답변 수동정지 전송): ${userSpeech}` });
             chatHistory.push({ role: 'assistant', zh: replyZh, ko: replyKo });
 
+            // 화면을 리프레시하고 새 문장 사운드를 자동으로 읽어줌
             compileStepEngine();
         }
 
